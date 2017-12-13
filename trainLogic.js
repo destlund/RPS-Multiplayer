@@ -46,28 +46,40 @@
 
   // let's fill out that table!
   database.ref().on('child_added', function(snapshot) {
-    console.log(snapshot.val());
     var sv = snapshot.val();
-    var ft = moment(sv.firstTrain, 'HH:MM');
-    var tf = sv.trainFrequency;
-    var newTime = ft.clone();
-    console.log(ft);
 
-    // let's moment up that next train time
-    var timeNow = moment();
-    var interval = moment.duration(parseInt(tf) , 'm')
+    //time to get the next train time
+    // Assumptions
+    var tFrequency = parseInt(sv.trainFrequency);
 
-    // for (newTime = moment(timeNow) ; moment(ft) < moment(timeNow)) {
-      newTime.add(interval);
-      console.log(interval);
-      console.log(newTime);
+    // Time is 3:30 AM
+    var firstTime = sv.firstTrain;
 
-    // }
+    // First Time (pushed back 1 year to make sure it comes before current time)
+    var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "years");
+    console.log(firstTimeConverted);
 
+    // Current Time
+    var currentTime = moment();
+    console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
 
-    var nextTrain = 'something';
+    // Difference between the times
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+    console.log("DIFFERENCE IN TIME: " + diffTime);
+
+    // Time apart (remainder)
+    var tRemainder = diffTime % tFrequency;
+    console.log(tRemainder);
+
+    // Minute Until Train
+    var tMinutesTillTrain = tFrequency - tRemainder;
+    console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+
+    // Next Train
+    var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+    console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
 
     // put it in the table
-    $('#train-table > tbody').append('<tr><td>' + sv.trainName + '</td><td>' + sv.trainDestination + '</td><td>' + sv.firstTrain  + '</td><td>' + sv.trainFrequency + '</td><td>' + nextTrain + '</td></tr>');
+    $('#train-table > tbody').append('<tr><td>' + sv.trainName + '</td><td>' + sv.trainDestination + '</td><td>' + sv.firstTrain  + '</td><td>' + sv.trainFrequency + '</td><td>' + moment(nextTrain).format("hh:mm") + '</td></tr>');
 
   })
