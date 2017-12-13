@@ -46,10 +46,29 @@
 
   // let's fill out that table!
   database.ref().on('child_added', function(snapshot) {
-    console.log(snapshot.val());
     var sv = snapshot.val();
 
+    //here are the things to do the math-y stuff
+    var tFrequency = parseInt(sv.trainFrequency);
+    var firstTime = sv.firstTrain;
+    var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "y");
+
+    // Current Time
+    var currentTime = moment();
+
+    // Difference between the times
+    var diffTime = moment().diff(moment(firstTimeConverted), "m");
+
+    // Time apart (remainder)
+    var tRemainder = diffTime % tFrequency;
+
+    // Minutes Until Train
+    var tMinutesTilTrain = tFrequency - tRemainder;
+
+    // Next Train
+    var nextTrain = moment().add(tMinutesTilTrain, "m");
+
     // put it in the table
-    $('#train-table > tbody').append('<tr><td>' + sv.trainName + '</td><td>' + sv.trainDestination + '</td><td>' + sv.firstTrain  + '</td><td>' + sv.trainFrequency + '</td></tr>');
+    $('#train-table > tbody').append('<tr><td>' + sv.trainName + '</td><td>' + sv.trainDestination + '</td><td>' + sv.firstTrain  + '</td><td>' + sv.trainFrequency + '</td><td>' + moment(nextTrain).format('HH:mm') + '</td><td>' + tMinutesTilTrain + '</td></tr>');
 
   })
