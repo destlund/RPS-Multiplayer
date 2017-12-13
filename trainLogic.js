@@ -48,8 +48,26 @@
   database.ref().on('child_added', function(snapshot) {
     console.log(snapshot.val());
     var sv = snapshot.val();
+    var ft = moment(sv.firstTrain, 'HH:MM');
+    var tf = sv.trainFrequency;
+    var newTime = ft.clone();
+    console.log(ft);
+
+    // let's moment up that next train time
+    var timeNow = moment();
+    var interval = moment.duration(parseInt(tf) , 'm')
+
+    // for (newTime = moment(timeNow) ; moment(ft) < moment(timeNow)) {
+      newTime.add(interval);
+      console.log(interval);
+      console.log(newTime);
+
+    // }
+
+
+    var nextTrain = 'something';
 
     // put it in the table
-    $('#train-table > tbody').append('<tr><td>' + sv.trainName + '</td><td>' + sv.trainDestination + '</td><td>' + sv.firstTrain  + '</td><td>' + sv.trainFrequency + '</td></tr>');
+    $('#train-table > tbody').append('<tr><td>' + sv.trainName + '</td><td>' + sv.trainDestination + '</td><td>' + sv.firstTrain  + '</td><td>' + sv.trainFrequency + '</td><td>' + nextTrain + '</td></tr>');
 
   })
