@@ -48,38 +48,27 @@
   database.ref().on('child_added', function(snapshot) {
     var sv = snapshot.val();
 
-    //time to get the next train time
-    // Assumptions
+    //here are the things to do the math-y stuff
     var tFrequency = parseInt(sv.trainFrequency);
-
-    // Time is 3:30 AM
     var firstTime = sv.firstTrain;
-
-    // First Time (pushed back 1 year to make sure it comes before current time)
-    var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "years");
-    console.log(firstTimeConverted);
+    var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "y");
 
     // Current Time
     var currentTime = moment();
-    console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
 
     // Difference between the times
-    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
-    console.log("DIFFERENCE IN TIME: " + diffTime);
+    var diffTime = moment().diff(moment(firstTimeConverted), "m");
 
     // Time apart (remainder)
     var tRemainder = diffTime % tFrequency;
-    console.log(tRemainder);
 
-    // Minute Until Train
-    var tMinutesTillTrain = tFrequency - tRemainder;
-    console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+    // Minutes Until Train
+    var tMinutesTilTrain = tFrequency - tRemainder;
 
     // Next Train
-    var nextTrain = moment().add(tMinutesTillTrain, "minutes");
-    console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
+    var nextTrain = moment().add(tMinutesTilTrain, "m");
 
     // put it in the table
-    $('#train-table > tbody').append('<tr><td>' + sv.trainName + '</td><td>' + sv.trainDestination + '</td><td>' + sv.firstTrain  + '</td><td>' + sv.trainFrequency + '</td><td>' + moment(nextTrain).format("hh:mm") + '</td></tr>');
+    $('#train-table > tbody').append('<tr><td>' + sv.trainName + '</td><td>' + sv.trainDestination + '</td><td>' + sv.firstTrain  + '</td><td>' + sv.trainFrequency + '</td><td>' + moment(nextTrain).format('HH:mm') + '</td><td>' + tMinutesTilTrain + '</td></tr>');
 
   })
